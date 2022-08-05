@@ -11,6 +11,10 @@ impl Graph {
     self.data[b].push(a);
   }
 
+  pub fn has_edge(&self, a: usize, b: usize) -> bool {
+    self.data[a].iter().any(|v| *v == b)
+  }
+
   pub fn get_neighbors(
     &self,
     vertex: usize,

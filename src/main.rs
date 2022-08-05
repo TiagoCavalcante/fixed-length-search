@@ -5,13 +5,33 @@ mod rand;
 use std::time::Instant;
 
 fn main() {
-  let mut graph = graph::Graph::new(1_000);
+  let size = 5_000;
+  let start = 0;
+  let end = 17;
+  let length = 11;
+
+  let mut graph = graph::Graph::new(size);
 
   let now = Instant::now();
-  graph.fill(0.01);
+  graph.fill(0.1);
   println!("Fill the graph - {:.2?}", now.elapsed());
 
   let now = Instant::now();
-  path::fixed_length_search(&graph, 0, 17, 11).unwrap();
+  let path =
+    path::fixed_length_search(&graph, start, end, length);
   println!("Fixed length search - {:.2?}", now.elapsed());
+
+  // Test if the path is valid.
+  assert!(path.is_some());
+
+  if let Some(path) = path {
+    assert_eq!(path.len(), length);
+    assert_eq!(*path.first().unwrap(), start);
+    assert_eq!(*path.last().unwrap(), end);
+
+    // Check if the path is made only by real edges.
+    for index in 0..path.len() - 1 {
+      assert!(graph.has_edge(path[index], path[index + 1]));
+    }
+  }
 }

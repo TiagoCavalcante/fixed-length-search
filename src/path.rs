@@ -3,20 +3,11 @@ use crate::graph::Graph;
 /// Returns whether `vertex` is in the path to the `to`
 /// vertex given the `predecessor` vector.
 fn in_path(
-  predecessor: &Vec<usize>,
+  predecessor: &Vec<Vec<usize>>,
   to: usize,
   vertex: usize,
 ) -> bool {
-  let mut current = to;
-
-  while predecessor[current] != usize::MAX {
-    current = predecessor[current];
-    if current == vertex {
-      return true;
-    }
-  }
-
-  return false;
+  predecessor[to].iter().any(|&v| v == vertex)
 }
 
 /// Fixed length search algorithm.
@@ -34,6 +25,8 @@ pub fn fixed_length_search(
   end: usize,
   length: usize,
 ) -> Option<Vec<usize>> {
+  let distance = length - 1;
+
   // Predecessor vector as in a normal BFS algorithm.
   let mut predecessor_from_start =
     vec![usize::MAX; graph.size];
@@ -42,9 +35,12 @@ pub fn fixed_length_search(
 
   // Differently from the BFS algorithm we need to keep the
   // distances to both the start and the end.
-  let mut predecessor_from_end =
-    vec![usize::MAX; graph.size];
-  let mut distance_to_end = vec![usize::MAX; graph.size];
+  // Also differently from the BFS algorithm we save the
+  // predeecessors of each vertex in its own array, this is
+  // necessary to avoid loops in the graph.
+  // Also this allow us to keep the distance as the length
+  // of the predecessor array.
+  let mut predecessor_from_end = vec![vec![]; graph.size];
 
   // A queue to maintain the vertices whose adjacency list
   // is to be scanned as per normal DFS algorithm.
@@ -84,15 +80,13 @@ pub fn fixed_length_search(
   // Note that we don't need to directly check if
   // distance_to_start[end] == usize::MAX because if it is
   // equal to usize::MAX then it is bigger than thedistance.
-  if distance_to_start[end] > length {
+  if distance_to_start[end] > distance {
     return None;
   }
 
   // Here we are starting from the end and going to the
   // start.
-  // The distance from the start to itself is 0.
-  distance_to_end[end] = 0;
-  queue.push_back(end);
+  queue.push_front(end);
 
   // Here the magic happens.
   // Instead of finding the smallest path we are trying to
@@ -106,22 +100,22 @@ pub fn fixed_length_search(
   // distance, so when it finds a path with the correct
   // length, the predecessor array would have changed and
   // a path with a bigger length would be returned instead.
-  while let Some(current) = queue.pop_back() {
+  while let Some(current) = queue.pop_front() {
     for vertex in graph.get_neighbors(current) {
       // If we never visited this vertex or the size of the
       // path is bigger than the last path but still not
       // bigger than the length and that neighbor is not in
       // the path to the current vertex.
-      // Note: if the distance is usize::MAX then that
-      // vertex was never reached before.
-      if distance_to_end[*vertex] == usize::MAX
-        || (distance_to_end[current] + 1
-          > distance_to_end[*vertex]
+      // Note: if the vertex has no predecessors then it
+      // was never reached.
+      if predecessor_from_end[*vertex].len() == 0
+        || (predecessor_from_end[current].len() + 1
+          > predecessor_from_end[*vertex].len()
           // If the sum of both is less than length, then
           // their sum + 1 won't be bigger than length.
-          && distance_to_end[current]
+          && predecessor_from_end[current].len()
             + distance_to_start[*vertex]
-            < length
+            < distance)
           // If it is already in path then we won't go to
           // this neighbor as we can't use any vertex more
           // than once.
@@ -129,20 +123,28 @@ pub fn fixed_length_search(
             &predecessor_from_end,
             current,
             *vertex,
-          ))
+          )
       {
-        distance_to_end[*vertex] =
-          distance_to_end[current] + 1;
-        predecessor_from_end[*vertex] = current;
+        predecessor_from_end[*vertex].clear();
+        let current_path =
+          predecessor_from_end[current].clone();
+        predecessor_from_end[*vertex].extend(current_path);
+        predecessor_from_end[*vertex].push(current);
 
         if distance_to_start[*vertex]
-          + distance_to_end[*vertex]
-          == length
+          + predecessor_from_end[*vertex].len()
+          == distance
         {
-          // First find the path between the first vertex
-          // and the current.
-          let mut path = vec![];
+          // First find the path between the end and the
+          // current vertex.
+          let mut path =
+            predecessor_from_end[*vertex].clone();
+
+          // Then append the path between the current vertex
+          // and the start.
           let mut current = *vertex;
+
+          path.push(current);
 
           while predecessor_from_start[current]
             != usize::MAX
@@ -151,17 +153,8 @@ pub fn fixed_length_search(
             path.push(current);
           }
 
+          // And then reverse the path.
           path.reverse();
-
-          // Then append the path between the current vertex
-          // and the last.
-          current = *vertex;
-
-          while predecessor_from_end[current] != usize::MAX
-          {
-            current = predecessor_from_end[current];
-            path.push(current);
-          }
 
           return Some(path);
         }
