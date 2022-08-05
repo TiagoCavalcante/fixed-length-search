@@ -17,7 +17,16 @@ fn in_path(
   return false;
 }
 
-pub fn fixed_length_bfs(
+/// Fixed length search algorithm.
+/// For understanding this algorithm I recommend you to
+/// study first how the BFS algorithm works.
+/// See https://en.wikipedia.org/wiki/Breadth-first_search
+/// ```
+/// let path =
+///   path::fixed_length_search(&graph, start, end, length);
+/// println!("{:?}", path.unwrap_or(vec![]));
+/// ```
+pub fn fixed_length_search(
   graph: &Graph,
   start: usize,
   end: usize,
