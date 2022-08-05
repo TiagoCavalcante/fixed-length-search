@@ -43,6 +43,6 @@ fn main() {
 
     println!("The path is valid");
   } else {
-    panic!("Couldn't find a valid graph")
+    panic!("Couldn't find a valid path")
   }
 }
