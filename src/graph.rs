@@ -12,7 +12,7 @@ impl Graph {
   }
 
   pub fn has_edge(&self, a: usize, b: usize) -> bool {
-    self.data[a].iter().any(|v| *v == b)
+    self.data[a].iter().any(|&neighbor| neighbor == b)
   }
 
   pub fn get_neighbors(
