@@ -5,7 +5,7 @@ mod rand;
 use std::time::Instant;
 
 fn main() {
-  let mut graph = graph::Graph::new(500);
+  let mut graph = graph::Graph::new(1_000);
 
   let now = Instant::now();
   graph.fill(0.01);

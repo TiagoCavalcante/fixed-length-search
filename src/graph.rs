@@ -1,4 +1,4 @@
-use crate::rand::BoolRng;
+use crate::rand::UniformRng;
 
 pub struct Graph {
   pub size: usize,
@@ -78,18 +78,21 @@ impl Graph {
   }
 
   pub fn fill(&mut self, density: f32) {
-    let mut bool_rng =
-      BoolRng::new(density / self.max_data_density());
+    let real_density = density / self.max_data_density();
 
-    for i in 0..self.size {
-      for j in 0..self.size {
-        // If i > j it already was added.
-        if i < j {
-          if bool_rng.sample() {
-            self.add_edge(i, j);
-          }
-        }
-      }
+    let marked = (real_density
+      // This is squared because we need to "throw the coin"
+      // for each pair of vertices.
+      * self.size.pow(2) as f32
+      // And divided by 2 because when we add a connection
+      // we add 2 edges, as the graph is undirected.
+      * 0.5) as usize;
+
+    let mut vertex_rng = UniformRng::new(0, self.size);
+
+    for _ in 0..marked {
+      self
+        .add_edge(vertex_rng.sample(), vertex_rng.sample());
     }
   }
 

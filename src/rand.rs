@@ -1,32 +1,26 @@
 use rand::distributions::{Distribution, Uniform};
 use rand::rngs::ThreadRng;
 
-/// Random boolean generator
+/// Uniform random number generator.
 /// ```
-/// let mut bool_rng = BoolRng::new(0.5);
-/// let is_true: bool = bool_rng.sample();
+/// let mut uniform_rng = BoolRng::new(1, 6);
+/// let dice: usize = uniform_rng.sample();
 /// ```
-pub struct BoolRng {
+pub struct UniformRng {
   uniform_rng: Uniform<usize>,
   rng: ThreadRng,
-  threshold: usize,
 }
 
-impl BoolRng {
-  /// Receives the probability of yielding `true`.
-  pub fn new(probability: f32) -> BoolRng {
+impl UniformRng {
+  pub fn new(start: usize, end: usize) -> UniformRng {
     let uniform_rng: Uniform<usize> =
-      Uniform::from(0..usize::MAX);
+      Uniform::from(start..end);
     let rng: ThreadRng = rand::thread_rng();
 
-    BoolRng {
-      uniform_rng,
-      rng,
-      threshold: (probability * usize::MAX as f32) as usize,
-    }
+    UniformRng { uniform_rng, rng }
   }
 
-  pub fn sample(&mut self) -> bool {
-    self.uniform_rng.sample(&mut self.rng) < self.threshold
+  pub fn sample(&mut self) -> usize {
+    self.uniform_rng.sample(&mut self.rng)
   }
 }
