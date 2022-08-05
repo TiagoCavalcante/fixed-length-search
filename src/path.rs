@@ -39,7 +39,7 @@ pub fn fixed_length_bfs(
 
   // The distance from the start to itself is 0.
   distance_to_start[start] = 0;
-  queue.push_back(start);
+  queue.push_front(start);
 
   // Standard BFS algorithm
   // See https://en.wikipedia.org/wiki/Breadth-first_search.
