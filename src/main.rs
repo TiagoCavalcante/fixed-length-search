@@ -31,6 +31,13 @@ fn main() {
     for index in 0..path.len() - 1 {
       assert!(graph.has_edge(path[index], path[index + 1]));
     }
+
+    // Ensure that the path contain no loops.
+    let mut unique = path.clone();
+    // We need a sorted vector to use dedup.
+    unique.sort();
+    unique.dedup();
+    assert_eq!(path.len(), unique.len());
   } else {
     panic!("Couldn't find a valid graph")
   }
