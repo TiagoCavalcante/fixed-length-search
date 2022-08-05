@@ -22,8 +22,6 @@ fn main() {
   println!("Fixed length search - {:.2?}", now.elapsed());
 
   // Test if the path is valid.
-  assert!(path.is_some());
-
   if let Some(path) = path {
     assert_eq!(path.len(), length);
     assert_eq!(*path.first().unwrap(), start);
@@ -33,5 +31,7 @@ fn main() {
     for index in 0..path.len() - 1 {
       assert!(graph.has_edge(path[index], path[index + 1]));
     }
+  } else {
+    panic!("Couldn't find a valid graph")
   }
 }
