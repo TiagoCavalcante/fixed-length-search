@@ -38,6 +38,8 @@ fn main() {
     unique.sort();
     unique.dedup();
     assert_eq!(path.len(), unique.len());
+
+    println!("The path is valid");
   } else {
     panic!("Couldn't find a valid graph")
   }
