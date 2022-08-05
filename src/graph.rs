@@ -40,8 +40,12 @@ impl Graph {
     let mut vertex_rng = UniformRng::new(0, self.size);
 
     for _ in 0..marked {
-      self
-        .add_edge(vertex_rng.sample(), vertex_rng.sample());
+      let a = vertex_rng.sample();
+      let b = vertex_rng.sample();
+
+      if a != b {
+        self.add_edge(a, b);
+      }
     }
   }
 

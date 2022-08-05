@@ -5,7 +5,7 @@ mod rand;
 use std::time::Instant;
 
 fn main() {
-  let size = 5_000;
+  let size = 10_000;
   let start = 0;
   let end = 17;
   let length = 11;
