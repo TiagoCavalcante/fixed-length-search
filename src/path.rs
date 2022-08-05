@@ -2,7 +2,24 @@ use crate::graph::Graph;
 
 /// Returns whether `vertex` is in the path to the `to`
 /// vertex given the `predecessor` vector.
-fn in_path(
+fn in_start_path(
+  predecessor: &Vec<usize>,
+  to: usize,
+  vertex: usize,
+) -> bool {
+  let mut current = to;
+  while predecessor[current] != usize::MAX {
+    current = predecessor[current];
+    if current == vertex {
+      return true;
+    }
+  }
+  return false;
+}
+
+/// Returns whether `vertex` is in the path to the `to`
+/// vertex given the `predecessor` vector of vectors.
+fn in_end_path(
   predecessor: &Vec<Vec<usize>>,
   to: usize,
   vertex: usize,
@@ -108,22 +125,20 @@ pub fn fixed_length_search(
       // the path to the current vertex.
       // Note: if the vertex has no predecessors then it
       // was never reached.
-      if predecessor_from_end[*vertex].len() == 0
+      if (predecessor_from_end[*vertex].len() == 0
         || (predecessor_from_end[current].len() + 1
           > predecessor_from_end[*vertex].len()
           // If the sum of both is less than length, then
           // their sum + 1 won't be bigger than length.
           && predecessor_from_end[current].len()
             + distance_to_start[*vertex]
-            < distance)
-          // If it is already in path then we won't go to
-          // this neighbor as we can't use any vertex more
-          // than once.
-          && !in_path(
-            &predecessor_from_end,
-            current,
-            *vertex,
-          )
+            < distance))
+        // If it is already in path then we won't go to
+        // this neighbor as we can't use any vertex more
+        // than once.
+        && !in_end_path(&predecessor_from_end, current, *vertex)
+        // The contrary may also happen
+        && !in_start_path(&predecessor_from_start, *vertex, current)
       {
         predecessor_from_end[*vertex].clear();
         let current_path =
