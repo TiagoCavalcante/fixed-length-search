@@ -34,8 +34,6 @@ pub fn fixed_length_search(
   end: usize,
   length: usize,
 ) -> Option<Vec<usize>> {
-  let distance = length - 1;
-
   // Predecessor vector as in a normal BFS algorithm.
   let mut predecessor_from_start =
     vec![usize::MAX; graph.size];
@@ -81,6 +79,15 @@ pub fn fixed_length_search(
     }
   }
 
+  // Return early if this node can't be reached or if its
+  // shortest path length is bigger than the desired length.
+  // Note that we don't need to directly check if
+  // distance_to_start[end] == usize::MAX because if it is
+  // equal to usize::MAX then it is bigger than thedistance.
+  if distance_to_start[end] > length {
+    return None;
+  }
+
   // Here we are starting from the end and going to the
   // start.
   // The distance from the start to itself is 0.
@@ -114,7 +121,7 @@ pub fn fixed_length_search(
           // their sum + 1 won't be bigger than length.
           && distance_to_end[current]
             + distance_to_start[*vertex]
-            < distance
+            < length
           // If it is already in path then we won't go to
           // this neighbor as we can't use any vertex more
           // than once.
@@ -130,18 +137,18 @@ pub fn fixed_length_search(
 
         if distance_to_start[*vertex]
           + distance_to_end[*vertex]
-          == distance
+          == length
         {
           // First find the path between the first vertex
           // and the current.
-          let mut path = vec![current];
+          let mut path = vec![];
           let mut current = *vertex;
 
           while predecessor_from_start[current]
             != usize::MAX
           {
-            path.push(predecessor_from_start[current]);
             current = predecessor_from_start[current];
+            path.push(current);
           }
 
           path.reverse();
@@ -152,8 +159,8 @@ pub fn fixed_length_search(
 
           while predecessor_from_end[current] != usize::MAX
           {
-            path.push(predecessor_from_end[current]);
             current = predecessor_from_end[current];
+            path.push(current);
           }
 
           return Some(path);
