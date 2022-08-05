@@ -37,6 +37,8 @@ fn main() {
     // We need a sorted vector to use dedup.
     unique.sort();
     unique.dedup();
+    // If the path had loops then the length of the unique
+    // vector would be smaller than the length of the path.
     assert_eq!(path.len(), unique.len());
 
     println!("The path is valid");
