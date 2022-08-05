@@ -27,6 +27,29 @@ fn in_end_path(
   predecessor[to].iter().any(|&v| v == vertex)
 }
 
+/// Returns whether both paths share a vertex.
+/// `predecessor_list` is a vector with only the
+/// predecessors of a given node, while `predecessors` is
+/// a predecessor vector of all vertices in the graph, so
+/// we need to iterate over it to find a path.
+/// We start in iterating over `predecessors` in `start`.
+fn shared_paths(
+  predecessor_list: &Vec<usize>,
+  predecessors: &Vec<usize>,
+  current: usize,
+) -> bool {
+  let mut current = current;
+
+  while predecessors[current] != usize::MAX {
+    current = predecessors[current];
+    if predecessor_list.iter().any(|&vertex| vertex==current) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 /// Fixed length search algorithm.
 /// For understanding this algorithm I recommend you to
 /// study first how the BFS algorithm works.
@@ -139,6 +162,11 @@ pub fn fixed_length_search(
         && !in_end_path(&predecessor_from_end, current, neighbor)
         // The contrary may also happen.
         && !in_start_path(&predecessor_from_start, neighbor, current)
+        // This is the slowest test, but if we remove this
+        // the algorithm may fail in small graphs.
+        // Possible optimization: Move the above check to
+        // inside the shared_paths function.
+        && !shared_paths(&predecessor_from_end[current],&predecessor_from_start, neighbor)
       {
         predecessor_from_end[neighbor].clear();
         let current_path =

@@ -12,8 +12,8 @@ $ cargo run --release
 
 Here is the output of the benchmark of the algorithm for a graph with 10 thousand vertices and density of 0.1:
 ```
-Fill the graph - 245.29ms
-Fixed length search - 14.17ms
+Fill the graph - 250.07ms
+Fixed length search - 19.52ms
 The path is valid
 ```
 
