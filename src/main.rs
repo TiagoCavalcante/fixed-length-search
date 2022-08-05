@@ -14,8 +14,4 @@ fn main() {
   let now = Instant::now();
   path::fixed_length_search(&graph, 0, 17, 11).unwrap();
   println!("Fixed length search - {:.2?}", now.elapsed());
-
-  let now = Instant::now();
-  path::yen(&mut graph, 0, 17, 11).unwrap();
-  println!("Yen - {:.2?}", now.elapsed());
 }
