@@ -17,22 +17,15 @@ fn in_start_path(
   return false;
 }
 
-/// Returns whether `vertex` is in the path to the `to`
-/// vertex given the `predecessor` vector of vectors.
-fn in_end_path(
-  predecessor: &Vec<Vec<usize>>,
-  to: usize,
-  vertex: usize,
-) -> bool {
-  predecessor[to].iter().any(|&v| v == vertex)
-}
-
 /// Returns whether both paths share a vertex.
 /// `predecessor_list` is a vector with only the
 /// predecessors of a given node, while `predecessors` is
 /// a predecessor vector of all vertices in the graph, so
 /// we need to iterate over it to find a path.
 /// We start in iterating over `predecessors` in `start`.
+///
+/// Note that it uses `current` as the 0th vertex of the
+/// `predecessors`, not `predecessors[current]`.
 fn shared_paths(
   predecessor_list: &Vec<usize>,
   predecessors: &Vec<usize>,
@@ -40,11 +33,14 @@ fn shared_paths(
 ) -> bool {
   let mut current = current;
 
-  while predecessors[current] != usize::MAX {
-    current = predecessors[current];
-    if predecessor_list.iter().any(|&vertex| vertex==current) {
+  while current != usize::MAX {
+    if predecessor_list
+      .iter()
+      .any(|&vertex| vertex == current)
+    {
       return true;
     }
+    current = predecessors[current];
   }
 
   return false;
@@ -157,7 +153,8 @@ pub fn fixed_length_search(
         // If it is already in path then we won't go to
         // this neighbor as we can't use any vertex more
         // than once.
-        && !in_end_path(&predecessor_from_end, current, neighbor)
+        // && !in_end_path(&predecessor_from_end, current, neighbor)
+        // The check above is implicity in shared_paths.
         // The contrary may also happen.
         && !in_start_path(&predecessor_from_start, neighbor, current)
         // This is the slowest test, but if we remove this
