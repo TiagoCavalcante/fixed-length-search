@@ -70,10 +70,12 @@ pub fn fixed_length_search(
   let mut distance_to_start = vec![usize::MAX; graph.size];
 
   // Differently from the BFS algorithm we need to keep the
-  // distances to both the start and the end.
+  // predecessors from both the start and the end.
   // Also differently from the BFS algorithm we save the
   // predeecessors of each vertex in its own array, this is
-  // necessary to avoid loops in the graph.
+  // necessary to avoid paths with wrong lengths because
+  // another iteration has modified the predecessors of a
+  // vertex.
   // Also this allow us to keep the distance as the length
   // of the predecessor array.
   let mut predecessor_from_end = vec![vec![]; graph.size];
@@ -143,8 +145,12 @@ pub fn fixed_length_search(
       // Note: if the vertex has no predecessors then it
       // was never reached.
       if (predecessor_from_end[neighbor].len() == 0
-        || (predecessor_from_end[current].len() + 1
-          > predecessor_from_end[neighbor].len()
+        // If the length of the current path is greater than
+        // or equal to the length of the old path, then the
+        // length of the current path + 1 will be bigger
+        // than the length of the old path.
+        || (predecessor_from_end[current].len()
+          >= predecessor_from_end[neighbor].len()
           // If the sum of both is less than length, then
           // their sum + 1 won't be bigger than length.
           && predecessor_from_end[current].len()

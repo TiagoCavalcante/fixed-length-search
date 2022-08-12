@@ -3,7 +3,7 @@ use rand::rngs::ThreadRng;
 
 /// Uniform random number generator.
 /// ```
-/// let mut uniform_rng = BoolRng::new(1, 6);
+/// let mut uniform_rng = UniformRng::new(1, 6);
 /// let dice: usize = uniform_rng.sample();
 /// ```
 pub struct UniformRng {
