@@ -50,6 +50,12 @@ fn shared_paths(
 /// For understanding this algorithm I recommend you to
 /// study first how the BFS algorithm works.
 /// See https://en.wikipedia.org/wiki/Breadth-first_search
+///
+/// The idea behind this algorithm is to first find the
+/// shortest path from the start to then end, and then make
+/// the reverse path trying to increase its length, but
+/// without exceding the desired length, and stop when a
+/// path with the desired length is reached.
 /// ```
 /// let path =
 ///   path::fixed_length_search(&graph, start, end, length);
@@ -169,6 +175,9 @@ pub fn fixed_length_search(
         // inside the shared_paths function.
         && !shared_paths(&predecessor_from_end[current],&predecessor_from_start, neighbor)
       {
+        // The code bellow is equivalent to:
+        // predecessor_from_end[neighbor] =
+        //   current_path + current;
         predecessor_from_end[neighbor].clear();
         let current_path =
           predecessor_from_end[current].clone();
