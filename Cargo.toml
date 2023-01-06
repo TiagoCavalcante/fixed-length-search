@@ -2,6 +2,8 @@
 name = "fixed-length-search"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "The fastest algorithm for finding a path with a specific length in a graph"
 
 [dependencies]
 rand = "0.8.5"
