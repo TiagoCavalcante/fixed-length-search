@@ -18,3 +18,9 @@ The path is valid
 ```
 
 Yep, that is milliseconds, not seconds.
+
+You can find a better benchmark [here](https://github.com/TiagoCavalcante/fls-bench).
+
+## How does it work?
+
+This is a mix of the ideas used in meet-in-the-middle search and BFS, there are lots of comments in the code that explains each aspect of this algorithm. You can find an animation that may help you to understand this algorithm [here](https://github.com/TiagoCavalcante/fls-animation).
