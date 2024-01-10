@@ -1,9 +1,9 @@
-use crate::graph::Graph;
+use graphs::Graph;
 
 /// Returns whether `vertex` is in the path to the `to`
 /// vertex given the `predecessor` vector.
 fn in_start_path(
-  predecessor: &Vec<usize>,
+  predecessor: &[usize],
   to: usize,
   vertex: usize,
 ) -> bool {
@@ -14,7 +14,7 @@ fn in_start_path(
       return true;
     }
   }
-  return false;
+  false
 }
 
 /// Returns whether both paths share a vertex.
@@ -27,8 +27,8 @@ fn in_start_path(
 /// Note that it uses `current` as the 0th vertex of the
 /// `predecessors`, not `predecessors[current]`.
 fn shared_paths(
-  predecessor_list: &Vec<usize>,
-  predecessors: &Vec<usize>,
+  predecessor_list: &[usize],
+  predecessors: &[usize],
   current: usize,
 ) -> bool {
   let mut current = current;
@@ -43,11 +43,11 @@ fn shared_paths(
     current = predecessors[current];
   }
 
-  return false;
+  false
 }
 
 /// Fixed length search algorithm.
-/// For understanding this algorithm I recommend you to
+/// For understanding this algorithm, I recommend you to
 /// study first how the BFS algorithm works.
 /// See https://en.wikipedia.org/wiki/Breadth-first_search
 ///
@@ -75,14 +75,14 @@ pub fn fixed_length_search(
   // Distance vector as in a normal BFS algorithm.
   let mut distance_to_start = vec![usize::MAX; graph.size];
 
-  // Differently from the BFS algorithm we need to keep the
+  // Differently from the BFS algorithm, we need to keep the
   // predecessors from both the start and the end.
-  // Also differently from the BFS algorithm we save the
+  // Also differently from the BFS algorithm, we save the
   // predecessors of each vertex in its own array, this is
   // necessary to avoid paths with wrong lengths because
   // another iteration has modified the predecessors of a
   // vertex.
-  // Also this allow us to keep the distance as the length
+  // Also this allows us to keep the distance as the length
   // of the predecessor array.
   let mut predecessor_from_end = vec![vec![]; graph.size];
 
@@ -110,7 +110,7 @@ pub fn fixed_length_search(
         distance_to_start[vertex] =
           distance_to_start[current] + 1;
         predecessor_from_start[vertex] = current;
-        // In a normal BFS algorithm we would stop if
+        // In a normal BFS algorithm, we would stop if
         // vertex is the end, but in the fixed length search
         // we need to know the distance to each vertex from
         // the start.
@@ -134,12 +134,12 @@ pub fn fixed_length_search(
   queue.push_front(end);
 
   // Here the magic happens.
-  // Instead of finding the smallest path we are trying to
+  // Instead of finding the smallest path, we are trying to
   // find the biggest path that is no bigger than the
   // length.
   // We want it to be exactly equal to the length, but we
   // won't get there so easy.
-  // In the first versions of this algorithm the queue
+  // In the first versions of this algorithm, the queue
   // needed to be first in last out, but in the latest
   // version it doesn't need to be anymore.
   while let Some(current) = queue.pop_front() {
@@ -148,9 +148,9 @@ pub fn fixed_length_search(
       // path is bigger than the last path but still not
       // bigger than the length and that neighbor is not in
       // the path to the current vertex.
-      // Note: if the vertex has no predecessors then it
+      // Note: if the vertex has no predecessors, then it
       // was never reached.
-      if (predecessor_from_end[neighbor].len() == 0
+      if (predecessor_from_end[neighbor].is_empty()
         // If the length of the current path is greater than
         // or equal to the length of the old path, then the
         // length of the current path + 1 will be bigger
@@ -162,8 +162,8 @@ pub fn fixed_length_search(
           && predecessor_from_end[current].len()
             + distance_to_start[neighbor]
             < distance))
-        // If it is already in path then we won't go to
-        // this neighbor as we can't use any vertex more
+        // If it is already in path, then we won't go to
+        // this neighbor, as we can't use any vertex more
         // than once.
         // && !in_end_path(&predecessor_from_end, current, neighbor)
         // The check above is implicit in shared_paths.
@@ -175,7 +175,7 @@ pub fn fixed_length_search(
         // inside the shared_paths function.
         && !shared_paths(&predecessor_from_end[current],&predecessor_from_start, neighbor)
       {
-        // The code bellow is equivalent to:
+        // The code below is equivalent to:
         // predecessor_from_end[neighbor] =
         //   current_path + current;
         predecessor_from_end[neighbor].clear();
@@ -219,5 +219,5 @@ pub fn fixed_length_search(
     }
   }
 
-  return None;
+  None
 }
