@@ -6,4 +6,5 @@ license = "MIT"
 description = "The fastest algorithm for finding a path with a specific length in a graph"
 
 [dependencies]
+graphs = { git = "https://github.com/TiagoCavalcante/graphs", tag = "0.3.2" }
 rand = "0.8.5"

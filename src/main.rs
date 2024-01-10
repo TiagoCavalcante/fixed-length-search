@@ -1,7 +1,6 @@
-mod graph;
 mod path;
-mod rand;
 
+use graphs::Graph;
 use std::time::Instant;
 
 fn main() {
@@ -10,7 +9,7 @@ fn main() {
   let end = 17;
   let length = 11;
 
-  let mut graph = graph::Graph::new(size);
+  let mut graph = Graph::new(size);
 
   let now = Instant::now();
   graph.fill(0.1);
